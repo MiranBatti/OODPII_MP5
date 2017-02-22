@@ -13,9 +13,24 @@ public class Mediator {
 	public void moveRequest(RodPanel rod)
 	{
 		if(counter == 0)
-			System.out.println(from = rod.getIndex());
-
-		hanoiModel.move(0, 1);
+		{
+			from = rod.getIndex();
+			System.out.println("from: " + from);
+			counter++;
+			return;
+		}
+		if(counter > 0)
+		{
+			to = rod.getIndex();
+			counter = 0;
+			System.out.println("to: " + to);
+		}
+		if((Integer)from != null && (Integer)to != null)
+		move(from, to);
 	}
 	
+	private void move(int from, int to)
+	{
+		hanoiModel.move(from, to);
+	}
 }
