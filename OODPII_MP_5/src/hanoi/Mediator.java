@@ -4,7 +4,9 @@ public class Mediator {
 	private HanoiModel hanoiModel;
 	private boolean requestsFull = false;
 	private int from, to, counter = 0;
+	private Disk fromDisk, toDisk;
 	Command command;
+	int tmp1, tmp2;
 	
 	public Mediator(HanoiModel hanoiModel)
 	{
@@ -14,22 +16,33 @@ public class Mediator {
 	
 	public void moveRequest(RodPanel rod)
 	{
+		if(hanoiModel.getNumberOfDisksOnRod(rod.getIndex()) == 0 && counter == 0)
+			return;
+
 		if(counter == 0)
 		{
 			from = rod.getIndex();
-			System.out.println("from: " + from);
+			fromDisk = hanoiModel.getTopDisk(rod.getIndex());
 			counter++;
 			return;
 		}
 		if(counter > 0)
 		{
 			to = rod.getIndex();
+			toDisk = hanoiModel.getTopDisk(rod.getIndex());
 			counter = 0;
-			System.out.println("to: " + to);
 		}
+		
+		if(fromDisk != null && toDisk != null)
+		{
+			if(fromDisk.getNumber() < toDisk.getNumber())
+			{
+				return;
+			}
+		}
+		
 		command.add(from, to);
-		if((Integer)from != null && (Integer)to != null)
-			move(from, to);
+		move(from, to);
 	}
 	
 	private void move(int from, int to)

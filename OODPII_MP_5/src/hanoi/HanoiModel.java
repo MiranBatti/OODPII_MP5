@@ -46,6 +46,11 @@ public class HanoiModel
     {
     return getRod(index);
     }
+  
+  public Disk getTopDisk(int index)
+  {
+	  return rods[index].top();
+  }
 
   private DiskStack getRod(int index)
     {

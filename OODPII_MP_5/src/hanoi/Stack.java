@@ -37,7 +37,7 @@ class Stack<TYPE> extends Observable implements Iterable<TYPE>
     {
     TYPE result = null;
     if (!empty())
-      result = list.get(0);
+      result = list.get(list.size() - 1);
     return result;
     }
 
