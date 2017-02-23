@@ -104,6 +104,10 @@ class TowerOfHanoiApp extends JFrame
   {
 	  mediator.undo();
   }
+  private void redo()
+  {
+	  mediator.redo();
+  }
   
   private JMenuBar makeMenuBar()
     {
@@ -154,6 +158,7 @@ class TowerOfHanoiApp extends JFrame
     JButton stopB = new JButton("Stop");
     JButton quitB = new JButton("Quit");
     JButton undoB = new JButton("Undo");
+    JButton redoB = new JButton("Redo");
     startB.addActionListener(new ActionListener() {
     public void actionPerformed(ActionEvent ae)
       {
@@ -180,11 +185,20 @@ class TowerOfHanoiApp extends JFrame
 			undo();
 		}
 	});
+    redoB.addActionListener(new ActionListener()
+	{
+		@Override
+		public void actionPerformed(ActionEvent e)
+		{
+			redo();
+		}
+	});
     JPanel southP = new JPanel();
     southP.add(startB);
     southP.add(stopB);
     southP.add(quitB);
     southP.add(undoB);
+    southP.add(redoB);
     return southP;
     }
 

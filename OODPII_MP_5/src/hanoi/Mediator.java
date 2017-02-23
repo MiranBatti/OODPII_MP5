@@ -41,4 +41,9 @@ public class Mediator {
 	{
 		command.undo();
 	}
+	
+	public void redo()
+	{
+		command.redo();
+	}
 }
