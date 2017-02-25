@@ -4,7 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;
 
-class Stack<TYPE> extends Observable implements Iterable<TYPE>
+public class Stack<TYPE> extends Observable implements Iterable<TYPE>
   {
   private List<TYPE> list = new LinkedList<TYPE>();
 

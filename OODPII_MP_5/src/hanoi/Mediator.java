@@ -1,12 +1,20 @@
 package hanoi;
 
+import java.awt.Color;
+
+import command.MacroCommand;
+import command.MoveCommand;
+
 public class Mediator {
 	private HanoiModel hanoiModel;
-	private int from, to, counter = 0;
+	private int from, to;
 	private Disk fromDisk, toDisk;
 	private MoveCommand command;
 	private MacroCommand macro;
 	private boolean macroMode = false;
+	private boolean rodHasDisk = false;
+	private boolean first = true;
+	private RodPanel previousRod;
 	
 	public Mediator(HanoiModel hanoiModel)
 	{
@@ -17,32 +25,50 @@ public class Mediator {
 	
 	public void moveRequest(RodPanel rod)
 	{
-		if(hanoiModel.getNumberOfDisksOnRod(rod.getIndex()) == 0 && counter == 0)
-			return;
-
-		if(counter == 0)
-		{
-			from = rod.getIndex();
-			fromDisk = hanoiModel.getTopDisk(rod.getIndex());
-			counter++;
-			return;
-		}
-		if(counter > 0)
-		{
-			to = rod.getIndex();
-			toDisk = hanoiModel.getTopDisk(rod.getIndex());
-			counter = 0;
-		}
+		rodHasDisk = rod.getDisks().iterator().hasNext();
 		
-		if(fromDisk != null && toDisk != null)
+		if(first) 
 		{
-			if(fromDisk.getNumber() < toDisk.getNumber())
+			if(rodHasDisk)
 			{
-				return;
+				rod.setColor(Color.orange, rod);
+				from = rod.getIndex();
+				previousRod = rod;
+				fromDisk = hanoiModel.getTopDisk(rod.getIndex());
 			}
+			else
+			{
+				if(first)
+				{
+					return;
+				}
+			}
+			first = false;
+			return;
+		} 
+		else
+		{
+			if(rodHasDisk)
+			{
+				rod.setColor(Color.yellow, previousRod);
+				to = rod.getIndex();
+				toDisk = hanoiModel.getTopDisk(rod.getIndex());
+				if(fromDisk.getNumber() > toDisk.getNumber())
+					command.add(from, to);				
+				else
+				{
+					first = true;
+					return;
+				}
+			}
+			else
+			{
+				to = rod.getIndex();
+				rod.setColor(Color.yellow, previousRod);
+				command.add(from, to);				
+			}
+			first = true;			
 		}
-		
-		command.add(from, to);
 		command.execute();
 	}
 	

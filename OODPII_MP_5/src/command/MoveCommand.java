@@ -1,4 +1,7 @@
-package hanoi;
+package command;
+
+import hanoi.HanoiModel;
+import hanoi.Stack;
 
 public class MoveCommand extends Command {
 	private Stack<Integer> oldCommands = new Stack<Integer>();

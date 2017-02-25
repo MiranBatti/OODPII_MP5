@@ -1,4 +1,4 @@
-package hanoi;
+package command;
 
 public abstract class Command
 {

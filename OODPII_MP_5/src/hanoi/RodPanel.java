@@ -13,13 +13,11 @@ class RodPanel extends JPanel implements Observer
   private static final long serialVersionUID = 1L;
   private Iterable<Disk>    rod;
   private Color             rodColor         = Color.yellow;
-  private Mediator 			mediator;
   private int 				index;
 
   public RodPanel(Iterable<Disk> rod, Mediator mediator)
     {
     super(true);
-    this.mediator = mediator;
     setBackground(Color.black);
     this.rod = rod;
     addMouseListener(new MouseAdapter() {
@@ -27,16 +25,9 @@ class RodPanel extends JPanel implements Observer
       {
       // prata med en mediator?
       mediator.moveRequest((RodPanel)e.getSource());
-      rodColor = Color.orange;
-      repaint();
       }
+    
 
-    public void mouseReleased(MouseEvent e)
-      {
-      // prata med en mediator?
-      rodColor = Color.yellow;
-      repaint();
-      }
     });
     }
   
@@ -53,6 +44,17 @@ class RodPanel extends JPanel implements Observer
   public int getIndex()
   {
 	  return index;
+  }
+  
+  public void setColor(Color c, RodPanel rod)
+  {
+	  rod.setColor(c);
+  }
+  
+  private void setColor(Color c)
+  {
+	  rodColor = c;
+	  repaint();
   }
   
   public void paintComponent(Graphics g)

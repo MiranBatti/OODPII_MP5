@@ -1,4 +1,4 @@
-package hanoi;
+package command;
 
 import java.util.Vector;
 
