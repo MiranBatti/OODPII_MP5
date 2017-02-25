@@ -1,13 +1,29 @@
 package hanoi;
 
-public class CommandImpl extends Command implements Cloneable {
+public class MoveCommand extends Command {
 	private Stack<Integer> oldCommands = new Stack<Integer>();
 	private Stack<Integer> backupCommands = new Stack<Integer>();
 	private HanoiModel hanoiModel;
+	private int from, to;
 	
-	public CommandImpl(HanoiModel hanoiModel)
+	public MoveCommand(HanoiModel hanoiModel)
 	{
 		this.hanoiModel = hanoiModel;
+	}
+	
+	public MoveCommand execute()
+	{
+		hanoiModel.move(from, to);
+		return this;
+	}
+	
+	public void add(int from, int to)
+	{
+		this.from = from;
+		this.to = to;
+		oldCommands.push(from);
+		oldCommands.push(to);
+		backupCommands.clear();
 	}
 	
 	public boolean redo()
@@ -37,14 +53,4 @@ public class CommandImpl extends Command implements Cloneable {
 		return false;
 	}
 	
-	public void add(int from, int to)
-	{
-		oldCommands.push(from);
-		oldCommands.push(to);
-	}
-	
-	public CommandImpl clone()
-	{
-		return null;
-	}
 }

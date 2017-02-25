@@ -12,6 +12,7 @@ class TowerOfHanoiApp extends JFrame
   private RodPanel          rodPanelB        = new RodPanel(hanoiModel.getIterableRod(1), mediator);
   private RodPanel          rodPanelC        = new RodPanel(hanoiModel.getIterableRod(2), mediator);
   private HanoiSolver       hanoiSolver;
+  private boolean			macroClicked	= false;
 
   public TowerOfHanoiApp()
     {
@@ -102,11 +103,15 @@ class TowerOfHanoiApp extends JFrame
   
   private void undo()
   {
-	  mediator.undo();
+	  mediator.undoRequest();
   }
   private void redo()
   {
-	  mediator.redo();
+	  mediator.redoRequest();
+  }
+  private void macro()
+  {
+	  mediator.macro();
   }
   
   private JMenuBar makeMenuBar()
@@ -159,16 +164,21 @@ class TowerOfHanoiApp extends JFrame
     JButton quitB = new JButton("Quit");
     JButton undoB = new JButton("Undo");
     JButton redoB = new JButton("Redo");
+    JButton macroB = new JButton("Macro");
     startB.addActionListener(new ActionListener() {
     public void actionPerformed(ActionEvent ae)
       {
       start();
+      undoB.setEnabled(false);
+      redoB.setEnabled(false);
       }
     });
     stopB.addActionListener(new ActionListener() {
     public void actionPerformed(ActionEvent ae)
       {
       stop();
+      undoB.setEnabled(true);
+      redoB.setEnabled(true);
       }
     });
     quitB.addActionListener(new ActionListener() {
@@ -193,12 +203,26 @@ class TowerOfHanoiApp extends JFrame
 			redo();
 		}
 	});
+    macroB.addActionListener(new ActionListener()
+	{
+		@Override
+		public void actionPerformed(ActionEvent e)
+		{
+			macro();
+			macroClicked = !macroClicked;
+			if(macroClicked)
+				macroB.setText("Finish");
+			else
+				macroB.setText("Macro");
+		}
+	});
     JPanel southP = new JPanel();
     southP.add(startB);
     southP.add(stopB);
     southP.add(quitB);
     southP.add(undoB);
     southP.add(redoB);
+    southP.add(macroB);
     return southP;
     }
 

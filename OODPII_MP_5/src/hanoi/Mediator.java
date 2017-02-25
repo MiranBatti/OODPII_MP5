@@ -2,16 +2,17 @@ package hanoi;
 
 public class Mediator {
 	private HanoiModel hanoiModel;
-	private boolean requestsFull = false;
 	private int from, to, counter = 0;
 	private Disk fromDisk, toDisk;
-	Command command;
-	int tmp1, tmp2;
+	private MoveCommand command;
+	private MacroCommand macro;
+	private boolean macroMode = false;
 	
 	public Mediator(HanoiModel hanoiModel)
 	{
 		this.hanoiModel = hanoiModel;
-		command = new CommandImpl(hanoiModel);
+		command = new MoveCommand(hanoiModel);
+		macro = new MacroCommand();
 	}
 	
 	public void moveRequest(RodPanel rod)
@@ -42,21 +43,30 @@ public class Mediator {
 		}
 		
 		command.add(from, to);
-		move(from, to);
+		command.execute();
 	}
 	
-	private void move(int from, int to)
+	public void undoRequest()
 	{
-		hanoiModel.move(from, to);
+		if(!macroMode)
+			command.undo();
+		else
+			macro.addUndo(command);		
 	}
 	
-	public void undo()
+	public void redoRequest()
 	{
-		command.undo();
+		if(!macroMode)
+			command.redo();
+		else
+			macro.addRedo(command);		
 	}
 	
-	public void redo()
+	public void macro()
 	{
-		command.redo();
+		if(macroMode)
+			macro.execute();
+		macroMode = !macroMode;
 	}
+	
 }

@@ -7,5 +7,5 @@ public interface HanoiSolver
 
   public int getDelayTime();
 
-  public void setDelayTime(int delayTime);
+  public void setDelayTime(int delayTime);  
   }
