@@ -2,7 +2,7 @@ package hanoi;
 
 import java.awt.*;
 
-class Disk
+public class Disk
   {
   private Color      color;
   private int        number;

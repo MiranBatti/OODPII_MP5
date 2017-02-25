@@ -8,7 +8,7 @@ import java.util.Observer;
 
 import javax.swing.*;
 
-class RodPanel extends JPanel implements Observer
+public class RodPanel extends JPanel implements Observer
   {
   private static final long serialVersionUID = 1L;
   private Iterable<Disk>    rod;

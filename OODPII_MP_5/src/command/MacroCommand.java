@@ -1,12 +1,27 @@
 package command;
 
+import java.util.Stack;
 import java.util.Vector;
 
 public class MacroCommand extends Command
 {
 	private Vector<Command> undoCommands = new Vector<Command>();
 	private Vector<Command> redoCommands = new Vector<Command>();
+	private Vector<Command>	moveCommands = new Vector<Command>();
 
+	public void add(Command c)
+	{
+		moveCommands.add(c);
+	}
+	
+	public void move()
+	{
+		for (Command command : moveCommands)
+		{
+			command.execute();
+		}
+	}
+	
 	public MacroCommand addUndo(Command c)
 	{
 		undoCommands.add(c);
@@ -43,14 +58,19 @@ public class MacroCommand extends Command
 	@Override
 	public MacroCommand execute()
 	{
-		undo();
-		redo();
+		if(moveCommands != null)
+			move();
+		if(undoCommands != null)
+			undo();
+		if(redoCommands != null)	
+			redo();
 		clearCommands();
 		return this;
 	}
 	
 	private void clearCommands()
 	{
+		moveCommands.clear();
 		undoCommands.clear();
 		redoCommands.clear();
 	}

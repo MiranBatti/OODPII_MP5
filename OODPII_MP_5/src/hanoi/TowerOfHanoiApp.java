@@ -3,16 +3,25 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
+import command.MacroCommand;
+import command.MoveCommand;
+import state.AutomaticState;
+import state.MacroState;
+import state.ManualState;
+
 class TowerOfHanoiApp extends JFrame
   {
   private static final long serialVersionUID = 1L;
   private HanoiModel        hanoiModel       = new HanoiModel();
-  private Mediator 			mediator		 = new Mediator(hanoiModel);
+  private MoveCommand		command			 = new MoveCommand(hanoiModel);
+  private MacroCommand		macroCommand	 = new MacroCommand();
+  private Mediator 			mediator		 = new Mediator(hanoiModel, command, macroCommand);
   private RodPanel          rodPanelA        = new RodPanel(hanoiModel.getIterableRod(0), mediator);
   private RodPanel          rodPanelB        = new RodPanel(hanoiModel.getIterableRod(1), mediator);
   private RodPanel          rodPanelC        = new RodPanel(hanoiModel.getIterableRod(2), mediator);
   private HanoiSolver       hanoiSolver;
   private boolean			macroClicked	= false;
+  private JPanel southP;
 
   public TowerOfHanoiApp()
     {
@@ -25,7 +34,7 @@ class TowerOfHanoiApp extends JFrame
     rodPanelC.setIndex(2);
     setJMenuBar(makeMenuBar());
     JPanel centerP = makeCenterPanel();
-    JPanel southP = makeSouthPanel();
+    southP = makeSouthPanel();
     Container c = getContentPane();
     c.setBackground(Color.black);
     c.setLayout(new BorderLayout());
@@ -79,6 +88,7 @@ class TowerOfHanoiApp extends JFrame
 
   private void start()
     {
+	  mediator.setState(new AutomaticState());
     new Thread() {
     public void run()
       {
@@ -112,6 +122,10 @@ class TowerOfHanoiApp extends JFrame
   private void macro()
   {
 	  mediator.macro();
+	  if(!macroClicked)
+		  mediator.setState(new MacroState(hanoiModel, command, macroCommand));
+	  else
+		  mediator.setState(new ManualState(hanoiModel, command));
   }
   
   private JMenuBar makeMenuBar()
@@ -171,6 +185,7 @@ class TowerOfHanoiApp extends JFrame
       start();
       undoB.setEnabled(false);
       redoB.setEnabled(false);
+      macroB.setEnabled(false);
       }
     });
     stopB.addActionListener(new ActionListener() {
@@ -179,6 +194,7 @@ class TowerOfHanoiApp extends JFrame
       stop();
       undoB.setEnabled(true);
       redoB.setEnabled(true);
+      macroB.setEnabled(true);
       }
     });
     quitB.addActionListener(new ActionListener() {

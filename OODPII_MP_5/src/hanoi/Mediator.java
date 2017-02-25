@@ -4,88 +4,39 @@ import java.awt.Color;
 
 import command.MacroCommand;
 import command.MoveCommand;
+import state.HanoiState;
+import state.ManualState;
 
 public class Mediator {
 	private HanoiModel hanoiModel;
-	private int from, to;
-	private Disk fromDisk, toDisk;
 	private MoveCommand command;
 	private MacroCommand macro;
 	private boolean macroMode = false;
-	private boolean rodHasDisk = false;
-	private boolean first = true;
-	private RodPanel previousRod;
+	private HanoiState state;
+	private boolean isClicked = false;
 	
-	public Mediator(HanoiModel hanoiModel)
+	public Mediator(HanoiModel hanoiModel, MoveCommand command, MacroCommand macro)
 	{
 		this.hanoiModel = hanoiModel;
-		command = new MoveCommand(hanoiModel);
-		macro = new MacroCommand();
+		this.command = command;
+		this.macro = macro;
+		state = new ManualState(hanoiModel, this.command);
 	}
 	
 	public void moveRequest(RodPanel rod)
 	{
-		rodHasDisk = rod.getDisks().iterator().hasNext();
-		
-		if(first) 
-		{
-			if(rodHasDisk)
-			{
-				rod.setColor(Color.orange, rod);
-				from = rod.getIndex();
-				previousRod = rod;
-				fromDisk = hanoiModel.getTopDisk(rod.getIndex());
-			}
-			else
-			{
-				if(first)
-				{
-					return;
-				}
-			}
-			first = false;
-			return;
-		} 
-		else
-		{
-			if(rodHasDisk)
-			{
-				rod.setColor(Color.yellow, previousRod);
-				to = rod.getIndex();
-				toDisk = hanoiModel.getTopDisk(rod.getIndex());
-				if(fromDisk.getNumber() > toDisk.getNumber())
-					command.add(from, to);				
-				else
-				{
-					first = true;
-					return;
-				}
-			}
-			else
-			{
-				to = rod.getIndex();
-				rod.setColor(Color.yellow, previousRod);
-				command.add(from, to);				
-			}
-			first = true;			
-		}
-		command.execute();
+		isClicked = true;
+		state.move(rod);
 	}
 	
 	public void undoRequest()
 	{
-		if(!macroMode)
-			command.undo();
-		else
-			macro.addUndo(command);		
+		state.undo();
 	}
 	
 	public void redoRequest()
 	{
-		if(!macroMode)
-			command.redo();
-		else
-			macro.addRedo(command);		
+		state.redo();
 	}
 	
 	public void macro()
@@ -93,6 +44,16 @@ public class Mediator {
 		if(macroMode)
 			macro.execute();
 		macroMode = !macroMode;
+	}
+	
+	public void setState(HanoiState state)
+	{
+		this.state = state;
+	}
+	
+	public boolean rodIsClicked()
+	{
+		return isClicked;
 	}
 	
 }

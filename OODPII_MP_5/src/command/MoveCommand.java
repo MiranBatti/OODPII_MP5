@@ -6,27 +6,28 @@ import hanoi.Stack;
 public class MoveCommand extends Command {
 	private Stack<Integer> oldCommands = new Stack<Integer>();
 	private Stack<Integer> backupCommands = new Stack<Integer>();
+	private Stack<Integer> moveCommands = new Stack<Integer>();
 	private HanoiModel hanoiModel;
-	private int from, to;
 	
 	public MoveCommand(HanoiModel hanoiModel)
 	{
 		this.hanoiModel = hanoiModel;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public MoveCommand execute()
 	{
-		hanoiModel.move(from, to);
+		if(!moveCommands.empty())
+		hanoiModel.move(moveCommands.pop(), moveCommands.pop());
 		return this;
 	}
 	
 	public void add(int from, int to)
 	{
-		this.from = from;
-		this.to = to;
+		moveCommands.push(to);
+		moveCommands.push(from);
 		oldCommands.push(from);
 		oldCommands.push(to);
-		backupCommands.clear();
 	}
 	
 	public boolean redo()
@@ -42,6 +43,7 @@ public class MoveCommand extends Command {
 		}
 		return false;
 	}
+	
 	public boolean undo()
 	{
 		if(!oldCommands.empty())
