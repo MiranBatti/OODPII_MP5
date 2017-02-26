@@ -2,7 +2,6 @@ package state;
 
 import java.awt.Color;
 
-import command.MacroCommand;
 import command.MoveCommand;
 import hanoi.Disk;
 import hanoi.HanoiModel;

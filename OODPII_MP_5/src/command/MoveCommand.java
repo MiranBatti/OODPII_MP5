@@ -1,5 +1,8 @@
 package command;
 
+import java.util.ArrayDeque;
+import java.util.Queue;
+
 import hanoi.HanoiModel;
 import hanoi.Stack;
 
@@ -8,7 +11,8 @@ public class MoveCommand extends Command {
 	private Stack<Integer> redoCommands = new Stack<Integer>();
 	private Stack<Integer> moveCommands = new Stack<Integer>();
 	private HanoiModel hanoiModel;
-	private int from, to;
+	private Queue<Integer> from 		= new ArrayDeque<Integer>();
+	private Queue<Integer> to 			= new ArrayDeque<Integer>();
 	
 	public MoveCommand(HanoiModel hanoiModel)
 	{
@@ -18,17 +22,15 @@ public class MoveCommand extends Command {
 	@SuppressWarnings("unchecked")
 	public MoveCommand execute()
 	{
-		if(!moveCommands.empty())
-			hanoiModel.move(from, to);
+		if(!from.isEmpty() && !to.isEmpty())
+			hanoiModel.move(from.poll(), to.poll());
 		return this;
 	}
 	
 	public void add(int from, int to)
 	{
-		this.from = from;
-		this.to = to;		
-		moveCommands.push(to);
-		moveCommands.push(from);
+		this.from.offer(from);
+		this.to.offer(to);
 		undoCommands.push(from);
 		undoCommands.push(to);
 	}

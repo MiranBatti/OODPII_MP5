@@ -22,6 +22,7 @@ class TowerOfHanoiApp extends JFrame
   private HanoiSolver       hanoiSolver;
   private boolean			macroClicked	= false;
   private JPanel southP;
+  private JLabel mode;
 
   public TowerOfHanoiApp()
     {
@@ -156,13 +157,14 @@ class TowerOfHanoiApp extends JFrame
 		@Override
 		public void actionPerformed(ActionEvent e)
 		{
+			stop();			
 			mediator.setState(ManualState.getInstance(hanoiModel, command));
 			southP.getComponent(3).setEnabled(true);	//undoB
 			southP.getComponent(4).setEnabled(true);	//redoB
 			southP.getComponent(5).setEnabled(true);	//macroB
 			southP.getComponent(0).setEnabled(false);	//startB
 			southP.getComponent(1).setEnabled(false);	//stopB
-			stop();
+			mode.setText("Mode: Manual");
 		}
 	});
     return bar;
@@ -171,6 +173,7 @@ class TowerOfHanoiApp extends JFrame
   private JPanel makeCenterPanel()
     {
     JPanel centerP = new JPanel();
+    mode = new JLabel("Mode: Automatic");    
     centerP.setLayout(new GridLayout(3, 7));
     centerP.setBackground(Color.black);
     for (int i = 0; i < 7; i++)
@@ -181,9 +184,10 @@ class TowerOfHanoiApp extends JFrame
     centerP.add(rodPanelB);
     centerP.add(new JLabel(""));
     centerP.add(rodPanelC);
-    centerP.add(new JLabel(""));
     for (int i = 0; i < 7; i++)
      centerP.add(new JLabel(""));
+    mode.setForeground(Color.yellow);
+    centerP.add(mode);
     return centerP;
     }
 
@@ -238,9 +242,16 @@ class TowerOfHanoiApp extends JFrame
 			macro();
 			macroClicked = !macroClicked;
 			if(macroClicked)
+			{
 				macroB.setText("Finish");
+				mode.setText("Mode: Macro");
+			}
 			else
+			{
 				macroB.setText("Macro");
+				mode.setText("Mode: Manual");
+			}
+			
 		}
 	});
     resetB.addActionListener(new ActionListener()
@@ -256,6 +267,7 @@ class TowerOfHanoiApp extends JFrame
 		    macroB.setEnabled(false);
 		    startB.setEnabled(true);
 		    stopB.setEnabled(true);
+		    mode.setText("Mode: Automatic");
 		}
 	});
     undoB.setEnabled(false);
