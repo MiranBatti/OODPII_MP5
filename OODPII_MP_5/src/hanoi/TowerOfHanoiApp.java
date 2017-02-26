@@ -88,7 +88,7 @@ class TowerOfHanoiApp extends JFrame
 
   private void start()
     {
-	  mediator.setState(new AutomaticState());
+	  mediator.setState(AutomaticState.getInstance());
     new Thread() {
     public void run()
       {
@@ -123,18 +123,20 @@ class TowerOfHanoiApp extends JFrame
   {
 	  mediator.macro();
 	  if(!macroClicked)
-		  mediator.setState(new MacroState(hanoiModel, command, macroCommand));
+		  mediator.setState(MacroState.getInstance(hanoiModel, command, macroCommand));
 	  else
-		  mediator.setState(new ManualState(hanoiModel, command));
+		  mediator.setState(ManualState.getInstance(hanoiModel, command));
   }
   
   private JMenuBar makeMenuBar()
     {
     JMenuItem ringsMI = new JMenuItem("Set rings");
     JMenuItem speedMI = new JMenuItem("Set speed");
+    JMenuItem manualMode = new JMenuItem("Manual mode");
     JMenu menu = new JMenu("Menu");
     menu.add(ringsMI);
     menu.add(speedMI);
+    menu.add(manualMode);
     JMenuBar bar = new JMenuBar();
     bar.add(menu);
     ringsMI.addActionListener(new ActionListener() {
@@ -149,6 +151,20 @@ class TowerOfHanoiApp extends JFrame
       changeSpeed();
       }
     });
+    manualMode.addActionListener(new ActionListener()
+	{
+		@Override
+		public void actionPerformed(ActionEvent e)
+		{
+			mediator.setState(ManualState.getInstance(hanoiModel, command));
+			southP.getComponent(3).setEnabled(true);	//undoB
+			southP.getComponent(4).setEnabled(true);	//redoB
+			southP.getComponent(5).setEnabled(true);	//macroB
+			southP.getComponent(0).setEnabled(false);	//startB
+			southP.getComponent(1).setEnabled(false);	//stopB
+			stop();
+		}
+	});
     return bar;
     }
 
@@ -179,22 +195,17 @@ class TowerOfHanoiApp extends JFrame
     JButton undoB = new JButton("Undo");
     JButton redoB = new JButton("Redo");
     JButton macroB = new JButton("Macro");
+    JButton resetB = new JButton("Reset");
     startB.addActionListener(new ActionListener() {
     public void actionPerformed(ActionEvent ae)
       {
       start();
-      undoB.setEnabled(false);
-      redoB.setEnabled(false);
-      macroB.setEnabled(false);
       }
     });
     stopB.addActionListener(new ActionListener() {
     public void actionPerformed(ActionEvent ae)
       {
       stop();
-      undoB.setEnabled(true);
-      redoB.setEnabled(true);
-      macroB.setEnabled(true);
       }
     });
     quitB.addActionListener(new ActionListener() {
@@ -232,6 +243,24 @@ class TowerOfHanoiApp extends JFrame
 				macroB.setText("Macro");
 		}
 	});
+    resetB.addActionListener(new ActionListener()
+	{
+		@Override
+		public void actionPerformed(ActionEvent e)
+		{
+			hanoiModel.reset();
+			mediator.setState(AutomaticState.getInstance());
+			mediator.resetRequest();
+		    undoB.setEnabled(false);
+		    redoB.setEnabled(false);
+		    macroB.setEnabled(false);
+		    startB.setEnabled(true);
+		    stopB.setEnabled(true);
+		}
+	});
+    undoB.setEnabled(false);
+    redoB.setEnabled(false);
+    macroB.setEnabled(false);
     JPanel southP = new JPanel();
     southP.add(startB);
     southP.add(stopB);
@@ -239,6 +268,7 @@ class TowerOfHanoiApp extends JFrame
     southP.add(undoB);
     southP.add(redoB);
     southP.add(macroB);
+    southP.add(resetB);
     return southP;
     }
 

@@ -14,15 +14,32 @@ public class ManualState extends HanoiState
 	private int from, to;
 	private Disk fromDisk, toDisk;
 	private MoveCommand command;
-	private MacroCommand macro;
-	private boolean macroMode = false;
 	private boolean rodHasDisk = false;
 	private boolean first = true;
 	private RodPanel previousRod;
+	private static ManualState instance = null;
 	
-	public ManualState(HanoiModel hanoiModel, MoveCommand moveCommand)
+	private ManualState()
+	{
+		
+	}
+	
+	public static ManualState getInstance(HanoiModel hanoiModel, MoveCommand moveCommand)
+	{
+		if(instance == null)
+			instance = new ManualState();
+		instance.setModel(hanoiModel);
+		instance.setCommands(moveCommand);
+		return instance;
+	}
+	
+	public void setModel(HanoiModel hanoiModel)
 	{
 		this.hanoiModel = hanoiModel;
+	}
+	
+	public void setCommands(MoveCommand moveCommand)
+	{
 		this.command = moveCommand;
 	}
 
@@ -85,6 +102,12 @@ public class ManualState extends HanoiState
 	public void redo()
 	{
 		command.redo();
+	}
+	
+	@Override
+	public String toString()
+	{
+		return "Manual";
 	}
 	
 }

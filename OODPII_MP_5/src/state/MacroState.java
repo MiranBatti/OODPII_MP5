@@ -18,10 +18,29 @@ public class MacroState extends HanoiState
 	private boolean rodHasDisk = false;
 	private boolean first = true;
 	private RodPanel previousRod;
+	private static MacroState instance = null;
 	
-	public MacroState(HanoiModel hanoiModel, MoveCommand moveCommand, MacroCommand macro)
+	private MacroState()
+	{
+		
+	}
+	
+	public static MacroState getInstance(HanoiModel hanoiModel, MoveCommand moveCommand, MacroCommand macro)
+	{
+		if(instance == null)
+			instance = new MacroState();
+		instance.setModel(hanoiModel);
+		instance.setCommands(moveCommand, macro);
+		return instance;
+	}
+	
+	public void setModel(HanoiModel hanoiModel)
 	{
 		this.hanoiModel = hanoiModel;
+	}
+	
+	public void setCommands(MoveCommand moveCommand, MacroCommand macro)
+	{
 		this.command = moveCommand;
 		this.macro = macro;
 	}
@@ -86,6 +105,12 @@ public class MacroState extends HanoiState
 	public void redo()
 	{
 		macro.addRedo(command);
+	}
+	
+	@Override
+	public String toString()
+	{
+		return "Macro";
 	}
 
 }

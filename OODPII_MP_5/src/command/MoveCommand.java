@@ -4,10 +4,11 @@ import hanoi.HanoiModel;
 import hanoi.Stack;
 
 public class MoveCommand extends Command {
-	private Stack<Integer> oldCommands = new Stack<Integer>();
-	private Stack<Integer> backupCommands = new Stack<Integer>();
+	private Stack<Integer> undoCommands = new Stack<Integer>();
+	private Stack<Integer> redoCommands = new Stack<Integer>();
 	private Stack<Integer> moveCommands = new Stack<Integer>();
 	private HanoiModel hanoiModel;
+	private int from, to;
 	
 	public MoveCommand(HanoiModel hanoiModel)
 	{
@@ -18,27 +19,29 @@ public class MoveCommand extends Command {
 	public MoveCommand execute()
 	{
 		if(!moveCommands.empty())
-		hanoiModel.move(moveCommands.pop(), moveCommands.pop());
+			hanoiModel.move(from, to);
 		return this;
 	}
 	
 	public void add(int from, int to)
 	{
+		this.from = from;
+		this.to = to;		
 		moveCommands.push(to);
 		moveCommands.push(from);
-		oldCommands.push(from);
-		oldCommands.push(to);
+		undoCommands.push(from);
+		undoCommands.push(to);
 	}
 	
 	public boolean redo()
 	{
-		if(!backupCommands.empty())
+		if(!redoCommands.empty())
 		{
-			int from = backupCommands.pop();
-			int to = backupCommands.pop();
+			int from = redoCommands.pop();
+			int to = redoCommands.pop();
 			hanoiModel.move(from, to);
-			oldCommands.push(from);
-			oldCommands.push(to);
+			undoCommands.push(from);
+			undoCommands.push(to);
 			return true;
 		}
 		return false;
@@ -46,16 +49,23 @@ public class MoveCommand extends Command {
 	
 	public boolean undo()
 	{
-		if(!oldCommands.empty())
+		if(!undoCommands.empty())
 		{
-			int from = oldCommands.pop();
-			int to = oldCommands.pop();
+			int from = undoCommands.pop();
+			int to = undoCommands.pop();
 			hanoiModel.move(from, to);
-			backupCommands.push(from);
-			backupCommands.push(to);
+			redoCommands.push(from);
+			redoCommands.push(to);
 			return true;
 		}
 		return false;
+	}
+	
+	public void reset()
+	{
+		moveCommands.clear();
+		undoCommands.clear();
+		redoCommands.clear();
 	}
 	
 }

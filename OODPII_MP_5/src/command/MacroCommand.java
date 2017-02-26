@@ -1,6 +1,5 @@
 package command;
 
-import java.util.Stack;
 import java.util.Vector;
 
 public class MacroCommand extends Command
@@ -54,8 +53,8 @@ public class MacroCommand extends Command
 		return false;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
+	@SuppressWarnings("unchecked")
 	public MacroCommand execute()
 	{
 		if(moveCommands != null)
@@ -64,15 +63,15 @@ public class MacroCommand extends Command
 			undo();
 		if(redoCommands != null)	
 			redo();
-		clearCommands();
+		reset();
 		return this;
 	}
 	
-	private void clearCommands()
+	public void reset()
 	{
 		moveCommands.clear();
 		undoCommands.clear();
 		redoCommands.clear();
-	}
+	}	
 
 }
